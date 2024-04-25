@@ -13,6 +13,10 @@ export class WeatherService {
   searchWeatherByCity(city:String):Observable<any>{
     const headers = new HttpHeaders()
     .set("X-RapidAPI-Key",this.apikey)
-    .set("X-RapidAPI-Host", "the")
+    .set("X-RapidAPI-Host", "the-weather-api.p.rapidapi.com")
+
+    const options = {headers};
+    return this.http.get(`${this.apiurl}/${city}`,options);
+
   }
 }
