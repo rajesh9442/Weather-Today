@@ -10,13 +10,12 @@ export class AppComponent {
 
   searchForm!: FormGroup;
 
-  constructor(private fb: FormBuilder){
-  
+  constructor(private fb: FormBuilder){}
+
   ngOnInit() {
     this.searchForm = this.fb.group({
       city:[null,Validators.required]
     })
-  }
   }
 
   searchWeather(){
