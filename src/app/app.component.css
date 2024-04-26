@@ -14,7 +14,7 @@
 .search-button{
     padding: 10px 20px;
     background-color: #1e2a78;
-    color:rgb(255, 255, 255);
+    color:white;
     border:none;
     border-radius: 5px;
     cursor:pointer;
@@ -40,12 +40,11 @@
 
 .image-container{
     position: relative;
-    width: 300px;
 }
 
 .section-image{
-    width:50px;
-    height:25px;
+    width: 450px;
+    height: 197px;
     object-fit: cover;
 }
 
