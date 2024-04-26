@@ -3,43 +3,28 @@
     <button class="search-button" (click)="searchWeather()" >Search</button>
 </div>
 
-
-
-
-
 <div class="content" *ngIf="weather" >
     <div class="row">
-<div class="image-container">
-    <img src="../assets/1.jpg" alt="section-image">
-</div>
-    <div class="temperature">
-    {{weather.temp}}
-</div>
-
-</div>
-
-<div class="row">
-    <div class="section-2">
-        <div class="top-info">
-            Expected Temperature: {{weather.expected_tempt}}
+        <div class="image-container">
+            <!-- <img src="../assets/1.jpg" alt="section-image"> -->
         </div>
-        <div class="bottom-info">
-            <p>Humidity: {{weather.humidity}}</p>
+        <div class="temperature">
+            {{weather.temp}}
         </div>
-        <div class="info-box">
-            <p>Wind Speed: {{weather.wind}}</p>
+    </div>
+
+    <div class="row">
+        <div class="section-2">
+            <div class="top-info">
+                Expected Temperature: {{weather.expected_temp}}
+            </div>
+            <div class="bottom-info">
+                <p>Humidity: {{weather.humidity}}</p>
+            </div>
+            <div class="info-box">
+                <p>Wind Speed: {{weather.wind}}</p>
+            </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-    </div>
 
