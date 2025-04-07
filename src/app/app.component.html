@@ -1,12 +1,12 @@
 <div class="search-container" [formGroup]="searchForm">
-    <input type="text" class="search-input" placeholder="search City" formControlName="city">
+    <input type="text" class="search-input" placeholder="search City" formControlName="city" required minlength="3">
     <button class="search-button" (click)="searchWeather()">Search</button>
 </div>
 
 <div class="content" *ngIf="weather">
     <div class="row">
         <div class="image-container">
-            <img src="../assets/1.jpg" alt="section-image" style="height: 500px;">
+            <img [src]="imagePath" alt="section" style="height: 500px;">
         </div>
         <div class="temperature">
             {{ weather.temp }}
