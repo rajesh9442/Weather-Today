@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { CacheService } from './cache.service';
 
 export interface WeatherResponse {
   success: boolean;
@@ -26,34 +27,56 @@ export interface WeatherResponse {
 }
 
 /**
- * Service responsible for fetching weather data from the RapidAPI weather service
+ * Service responsible for fetching and caching weather data
  */
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
   private readonly _apiurl = 'https://the-weather-api.p.rapidapi.com/api/weather';
+  private readonly _cacheExpirationMinutes = 30; // Cache expires in 30 minutes
 
-  constructor(private readonly _http: HttpClient) {}
+  constructor(
+    private readonly _http: HttpClient,
+    private readonly _cacheService: CacheService
+  ) {}
 
   /**
-   * Fetches weather data for a specific city
+   * Fetches weather data for a specific city, using cache if available
    * @param city - The name of the city to fetch weather data for
    * @returns Observable of WeatherResponse or error object
    */
   searchWeatherByCity(city: string): Observable<WeatherResponse> {
+    // Check cache first
+    const cachedData = this._cacheService.get<WeatherResponse>(city);
+    if (cachedData) {
+      console.log('Returning cached weather data for:', city);
+      return of(cachedData);
+    }
+
     const headers = new HttpHeaders()
       .set('X-RapidAPI-Key', environment.rapidApiKey ?? '')
       .set('X-RapidAPI-Host', 'the-weather-api.p.rapidapi.com');
 
     const options = { headers };
     
-    // Log the API call for monitoring
-    console.log(`Fetching weather data for city: ${city}`);
+    console.log(`Fetching fresh weather data for city: ${city}`);
 
-    return this._http.get<WeatherResponse>(`${this._apiurl}/${encodeURIComponent(city)}`, options).pipe(
-      catchError(this._handleError)
-    );
+    return this._http.get<WeatherResponse>(`${this._apiurl}/${encodeURIComponent(city)}`, options)
+      .pipe(
+        tap(response => {
+          // Cache the response
+          this._cacheService.set(city, response, this._cacheExpirationMinutes);
+        }),
+        catchError(this._handleError)
+      );
+  }
+
+  /**
+   * Clears the weather cache
+   */
+  clearCache(): void {
+    this._cacheService.clear();
   }
 
   /**

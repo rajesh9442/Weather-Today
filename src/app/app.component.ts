@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { WeatherService, WeatherResponse } from './service/weather.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { CacheService } from './service/cache.service';
 import { 
   faSearch, 
   faThermometerHalf, 
@@ -46,12 +47,30 @@ export class AppComponent implements OnInit {
     private readonly _fb: FormBuilder,
     private readonly _weatherService: WeatherService,
     private readonly _snackBar: MatSnackBar,
-    private readonly _renderer: Renderer2
+    private readonly _renderer: Renderer2,
+    private readonly _cacheService: CacheService
   ) {
     this._initForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._loadLastSearchedWeather();
+  }
+
+  /**
+   * Loads the last searched weather data from cache if available
+   */
+  private _loadLastSearchedWeather(): void {
+    const lastSearchedCity = this._cacheService.getLastSearchedCity();
+    if (lastSearchedCity) {
+      const cachedWeather = this._cacheService.get<WeatherResponse>(lastSearchedCity);
+      if (cachedWeather) {
+        this.weather = cachedWeather.data;
+        this._updateBackgroundImage(cachedWeather.data.bg_image);
+        this.searchForm.patchValue({ city: lastSearchedCity });
+      }
+    }
+  }
 
   /**
    * Updates the page background with the weather image
